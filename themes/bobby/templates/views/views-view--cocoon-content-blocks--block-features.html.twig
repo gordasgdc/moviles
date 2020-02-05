@@ -1,0 +1,38 @@
+{%
+  set classes = [
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+<div{{ attributes.addClass(classes).addClass('container') }}>
+  {{ title_prefix }}
+  {{ title }}
+  {{ title_suffix }}
+
+  {% if header %}
+    <div class="row">
+      <div class="text-center col-md-6 col-md-offset-3">
+        {{ header }}
+      </div>
+    </div>
+  {% endif %}
+
+  {{ exposed }}
+  {{ attachment_before }}
+
+  <div class="row-baseline row">
+    {{ rows }}
+  </div>
+
+  {{ empty }}
+  {{ pager }}
+
+  {{ attachment_after }}
+  {{ more }}
+
+  {% if footer %}
+      {{ footer }}
+
+  {% endif %}
+
+  {{ feed_icons }}
+</div>

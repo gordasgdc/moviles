@@ -1,0 +1,409 @@
+<?php
+
+/**
+ * @file
+ * Functions to support theming in the bobby theme.
+ */
+
+use Drupal\Core\Template\RenderWrapper;
+use Drupal\Core\Template\Attribute;
+use Drupal\search\Form\SearchBlockForm;
+use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\system\Form\ThemeSettingsForm;
+use Drupal\file\Entity\File;
+use Drupal\Core\Url;
+use Drupal\file\Plugin\Core\Entity\FileInterface;
+
+/**
+ * Implements hook_preprocess_HOOK() for HTML document templates.
+ *
+ * Adds body classes if certain regions have content.
+ */
+function bobby_preprocess_html(&$variables) {
+  // Add information about the number of sidebars.
+  if (!empty($variables['page']['sidebar_first']) && !empty($variables['page']['sidebar_second'])) {
+    $variables['attributes']['class'][] = 'layout-two-sidebars';
+  }
+  elseif (!empty($variables['page']['sidebar_first'])) {
+    $variables['attributes']['class'][] = 'layout-one-sidebar';
+    $variables['attributes']['class'][] = 'layout-sidebar-first';
+  }
+  elseif (!empty($variables['page']['sidebar_second'])) {
+    $variables['attributes']['class'][] = 'layout-one-sidebar';
+    $variables['attributes']['class'][] = 'layout-sidebar-second';
+  }
+  else {
+    $variables['attributes']['class'][] = 'layout-no-sidebars';
+  }
+
+  if (!empty($variables['page']['featured_top'])) {
+    $variables['attributes']['class'][] = 'has-featured-top';
+  }
+
+ // Get theme settings
+  $variables['map_show'] = theme_get_setting('map_show');
+  $variables['map_latitude'] = theme_get_setting('map_latitude');
+  $variables['map_longitude'] = theme_get_setting('map_longitude');
+  $variables['map_address'] = theme_get_setting('map_address');
+  $variables['map_phone'] = theme_get_setting('map_phone');
+  $variables['map_email'] = theme_get_setting('map_email');
+}
+
+function bobby_preprocess_page(&$variables) {
+  $variables['base_path'] = base_path();
+  $variables['site_name'] = \Drupal::config('system.site')->get('name');
+
+  // Get theme settings
+  $variables['anchor_hero'] = theme_get_setting('anchor_hero');
+  $variables['anchor_features'] = theme_get_setting('anchor_features');
+  $variables['anchor_big_letters'] = theme_get_setting('anchor_big_letters');
+  $variables['anchor_video_popup'] = theme_get_setting('anchor_video_popup');
+  $variables['anchor_percentages'] = theme_get_setting('anchor_percentages');
+  $variables['anchor_team'] = theme_get_setting('anchor_team');
+  $variables['anchor_our_services'] = theme_get_setting('anchor_our_services');
+  $variables['anchor_call_to_action'] = theme_get_setting('anchor_call_to_action');
+  $variables['anchor_portfolio'] = theme_get_setting('anchor_portfolio');
+  $variables['anchor_pricing_tables'] = theme_get_setting('anchor_pricing_tables');
+  $variables['anchor_testimonials'] = theme_get_setting('anchor_testimonials');
+  $variables['anchor_contact_details'] = theme_get_setting('anchor_contact_details');
+  $variables['footer_copyright'] = theme_get_setting('footer_copyright');
+  $variables['footer_facebook'] = theme_get_setting('footer_facebook');
+  $variables['footer_twitter'] = theme_get_setting('footer_twitter');
+  $variables['footer_googleplus'] = theme_get_setting('footer_googleplus');
+  $variables['footer_dribbble'] = theme_get_setting('footer_dribbble');
+  $variables['footer_linkedin'] = theme_get_setting('footer_linkedin');
+  $variables['map_show'] = theme_get_setting('map_show');
+  $variables['map_latitude'] = theme_get_setting('map_latitude');
+  $variables['map_longitude'] = theme_get_setting('map_longitude');
+  $variables['map_address'] = theme_get_setting('map_address');
+  $variables['map_phone'] = theme_get_setting('map_phone');
+  $variables['map_email'] = theme_get_setting('map_email');
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for form templates.
+ * @param array $suggestions
+ * @param array $variables
+ */
+function bobby_theme_suggestions_block_alter(&$suggestions, $variables) {
+  /* COCOON: below code for custom block types
+	eg: block--custom-block-type.html.twig
+  */
+  $content = $variables['elements']['content'];
+  if (isset($content['#block_content']) && $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
+    $suggestions[] = 'block__' . $content['#block_content']->bundle();
+  }
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK() for page templates.
+ */
+function bobby_preprocess_page_title(&$variables) {
+  // Since the title and the shortcut link are both block level elements,
+  // positioning them next to each other is much simpler with a wrapper div.
+  if (!empty($variables['title_suffix']['add_or_remove_shortcut']) && $variables['title']) {
+    // Add a wrapper div using the title_prefix and title_suffix render
+    // elements.
+    $variables['title_prefix']['shortcut_wrapper'] = array(
+      '#markup' => '<div class="shortcut-wrapper clearfix">',
+      '#weight' => 100,
+    );
+    $variables['title_suffix']['shortcut_wrapper'] = array(
+      '#markup' => '</div>',
+      '#weight' => -99,
+    );
+    // Make sure the shortcut link is the first item in title_suffix.
+    $variables['title_suffix']['add_or_remove_shortcut']['#weight'] = -100;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for maintenance-page.html.twig.
+ */
+function bobby_preprocess_maintenance_page(&$variables) {
+  // By default, site_name is set to Drupal if no db connection is available
+  // or during site installation. Setting site_name to an empty string makes
+  // the site and update pages look cleaner.
+  // @see template_preprocess_maintenance_page
+  if (!$variables['db_is_active']) {
+    $variables['site_name'] = '';
+  }
+
+  // bobby has custom styling for the maintenance page.
+  $variables['#attached']['library'][] = 'bobby/maintenance_page';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for node.html.twig.
+ */
+function bobby_preprocess_node(&$variables) {
+  // Remove the "Add new comment" link on teasers or when the comment form is
+  // displayed on the page.
+  if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
+    unset($variables['content']['links']['comment']['#links']['comment-add']);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for block.html.twig.
+ */
+function bobby_preprocess_block(&$variables) {
+  // Add a clearfix class to system branding blocks.
+  if ($variables['plugin_id'] == 'system_branding_block') {
+    $variables['attributes']['class'][] = 'clearfix';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menu.html.twig.
+ */
+function bobby_preprocess_menu(&$variables) {
+  $variables['attributes']['class'][] = 'clearfix';
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for form templates.
+ */
+function bobby_theme_suggestions_form_alter(array &$suggestions, array $variables) {
+  if ($variables['element']['#form_id'] == 'search_block_form') {
+    $suggestions[] = 'form__search_block_form';
+  }
+}
+
+/**
+ * Implements hook_form_alter() to add classes to the search form.
+ */
+function bobby_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if (in_array($form_id, ['search_block_form', 'search_form'])) {
+    $key = ($form_id == 'search_block_form') ? 'actions' : 'basic';
+    if (!isset($form[$key]['submit']['#attributes'])) {
+      $form[$key]['submit']['#attributes'] = new Attribute();
+    }
+    $form[$key]['submit']['#attributes']->addClass('search-form__submit');
+  }
+}
+
+/**
+ * Implements hook_form_system_theme_settings_alter().
+ */
+function bobby_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $form['cocoon_settings'] = array(
+    '#type' => 'vertical_tabs',
+    '#default_tab' => 'edit-publication',
+  );
+/*  $form['logo'] = array(
+    '#type' => 'details',
+    '#title' => t('Logo'),
+    '#group' => 'cocoon_settings',
+  );
+  $form['logo']['logo_light'] = array(
+    '#type' => 'managed_file',
+    '#title' => t('Logo light'),
+    '#description' => t("Upload a light variation of your logo (preferably white)."),
+    '#default_value' => theme_get_setting('logo_light'),
+    '#upload_location' => 'public://',
+    '#upload_validators' => array(
+        'file_validate_extensions' => array('gif png jpg jpeg'),
+    ),
+  );
+  $form['logo']['logo_dark'] = array(
+    '#type' => 'managed_file',
+    '#title' => t('Logo dark'),
+    '#description' => t("Upload a dark variation of your logo."),
+    '#upload_location' => 'public://',
+    '#upload_validators' => array(
+        'file_validate_extensions' => array('gif png jpg jpeg'),
+    ),
+    '#element_validate' => array('logo_dark_validate'),
+    '#default_value' => theme_get_setting('logo_dark'),
+  ); */
+  $form['anchor'] = array(
+    '#type' => 'details',
+    '#title' => t('Anchor points'),
+    '#group' => 'cocoon_settings',
+    '#description' => t("Define anchor points for the one-page regions. Do not include the hash (#) symbol."),
+  );
+  $form['anchor']['anchor_hero'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Hero region'),
+    '#default_value' => theme_get_setting('anchor_hero'),
+  );
+  $form['anchor']['anchor_features'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Features region'),
+    '#default_value' => theme_get_setting('anchor_features'),
+  );
+  $form['anchor']['anchor_big_letters'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Big letters region'),
+    '#default_value' => theme_get_setting('anchor_big_letters'),
+  );
+  $form['anchor']['anchor_video_popup'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Video popup region'),
+    '#default_value' => theme_get_setting('anchor_video_popup'),
+  );
+  $form['anchor']['anchor_percentages'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Percentages region'),
+    '#default_value' => theme_get_setting('anchor_percentages'),
+  );
+  $form['anchor']['anchor_team'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Team region'),
+    '#default_value' => theme_get_setting('anchor_team'),
+  );
+  $form['anchor']['anchor_our_services'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Our Services region'),
+    '#default_value' => theme_get_setting('anchor_our_services'),
+  );
+  $form['anchor']['anchor_call_to_action'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Call to action region'),
+    '#default_value' => theme_get_setting('anchor_call_to_action'),
+  );
+  $form['anchor']['anchor_portfolio'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Portfolio region'),
+    '#default_value' => theme_get_setting('anchor_portfolio'),
+  );
+  $form['anchor']['anchor_pricing_tables'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Pricing tables region'),
+    '#default_value' => theme_get_setting('anchor_pricing_tables'),
+  );
+  $form['anchor']['anchor_testimonials'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Testimonials region'),
+    '#default_value' => theme_get_setting('anchor_testimonials'),
+  );
+  $form['anchor']['anchor_contact_details'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Contact details region'),
+    '#default_value' => theme_get_setting('anchor_contact_details'),
+  );
+  $form['footer'] = array(
+    '#type' => 'details',
+    '#title' => t('Footer'),
+    '#group' => 'cocoon_settings',
+  );
+  $form['footer']['footer_copyright'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Copyright'),
+    '#description' => t("Copyright notice in the footer."),
+    '#default_value' => theme_get_setting('footer_copyright'),
+  );
+  $form['footer']['footer_facebook'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Facebook URL'),
+    '#description' => t("URL to Facebook profile. Leave blank for none."),
+    '#default_value' => theme_get_setting('footer_facebook'),
+  );
+  $form['footer']['footer_twitter'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Twitter URL'),
+    '#description' => t("URL to Twitter profile. Leave blank for none."),
+    '#default_value' => theme_get_setting('footer_twitter'),
+  );
+  $form['footer']['footer_googleplus'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Google Plus URL'),
+    '#description' => t("URL to Google Plus profile. Leave blank for none."),
+    '#default_value' => theme_get_setting('footer_googleplus'),
+  );
+  $form['footer']['footer_dribbble'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Dribbble URL'),
+    '#description' => t("URL to Dribbble profile. Leave blank for none."),
+    '#default_value' => theme_get_setting('footer_dribbble'),
+  );
+  $form['footer']['footer_linkedin'] = array(
+    '#type' => 'textfield',
+    '#title' => t('LinkedIn URL'),
+    '#description' => t("URL to LinkedIn profile. Leave blank for none."),
+    '#default_value' => theme_get_setting('footer_linkedin'),
+  );
+  $form['map'] = array(
+    '#type' => 'details',
+    '#title' => t('Google Map'),
+    '#group' => 'cocoon_settings',
+    '#description'   => t("Configure settings for the Google Map."),
+  );
+  $form['map']['map_show'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Show/Hide Google Map"),
+    '#default_value' => theme_get_setting('map_show'),
+    '#description'   => t("Choose whether to show or hide the Google map."),
+  );
+  $form['map']['map_latitude'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Latitude'),
+    '#description'   => t("Latitude for the map marker."),
+    '#default_value' => theme_get_setting('map_latitude'),
+  );
+  $form['map']['map_longitude'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Longitude'),
+    '#description'   => t("Longitude for the map marker."),
+    '#default_value' => theme_get_setting('map_longitude'),
+  );
+  $form['map']['map_address'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Address'),
+    '#description'   => t("Address to display when the map marker is clicked."),
+    '#default_value' => theme_get_setting('map_address'),
+  );
+  $form['map']['map_phone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Phone'),
+    '#description'   => t("Phone number to display when the map marker is clicked."),
+    '#default_value' => theme_get_setting('map_phone'),
+  );
+  $form['map']['map_email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Email'),
+    '#description'   => t("Email address to display when the map marker is clicked."),
+    '#default_value' => theme_get_setting('map_email'),
+  );
+
+/* $submit = function($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $values = $form_state->getValue('logo_dark', []);
+  if ($values) {
+    $fid = $values[0];
+    $file = \Drupal\file\Entity\File::load($fid);
+    $file_usage = \Drupal::service('file.usage');
+    $file_usage->add($file, 'bobby', 'theme', 1);
+  }
+};
+
+$form['#submit'][] = $submit; 
+*/
+
+}
+
+
+/**
+ * Check and save the uploaded header background image
+ */
+/*function logo_dark_validate($element, FormStateInterface $form_state) {
+  global $base_url;
+
+  $file = file_save_upload('logo_dark', NULL, FILE_EXISTS_REPLACE);
+
+  if (!empty($file)) {
+    // change file's status from temporary to permanent and update file database
+    if ((is_object($file[0]) == 1)) {
+      $file[0]->status = FILE_STATUS_PERMANENT;
+      $file[0]->save();
+      $uri = $file[0]->getFileUri();
+      $file_url = file_create_url($uri);
+      $file_url = str_ireplace($base_url, '', $file_url);
+      $form_state->setValue('logo_dark', $file_url); 
+    }
+ }
+}*/
+

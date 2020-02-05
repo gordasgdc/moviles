@@ -1,0 +1,29 @@
+{%
+  set classes = [
+    'block',
+    'block-' ~ configuration.provider|clean_class,
+    'block-' ~ plugin_id|clean_class,
+    label ? 'has-title',
+    content['body']['#bundle'] ? 'bundle-' ~ content['body']['#bundle'],
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  <div class="section-lg masked rel-1" data-stellar-background-ratio="0.6">
+        {% if content.field_image|render %}
+          <div class="ccn-bg-img">{{ content.field_image }}</div>
+        {% endif %}
+  <div class="ccn-exploded-bg-inner"><div class="container">
+    <div class="row">
+      {% block content %}
+      <header class="text-center col-md-6 col-md-offset-3">
+        {% if content.field_video_url|render %}<a href="{{ content.field_video_url }}" class="text-yellow icon-header icon icon-video js-play"></a>{% endif %}
+        {{ title_prefix }}{% if label %}{{ label }} {% endif %}{{ title_suffix }}
+        <h2 class="section-title">{{ content.field_title }}</h2>
+        <p class="text-muted">{{ content.field_plain_body }}</p>
+      </header>
+      {% endblock %}
+    </div>
+  </div></div></div>
+</div>
+        
+      

@@ -1,0 +1,33 @@
+# Default features
+features:
+   comment_user_picture: true
+   comment_user_verification: true
+   favicon: true
+   logo: true
+   name: true
+   node_user_picture: true
+   slogan: true
+anchor_hero: 'home'
+anchor_features: 'features'
+anchor_big_letters: 'big-letters'
+anchor_video_popup: 'video-popup'
+anchor_percentages: 'percentages'
+anchor_team: 'team'
+anchor_our_services: 'our-services'
+anchor_call_to_action: 'call-to-action'
+anchor_portfolio: 'portfolio'
+anchor_pricing_tables: 'pricing-tables'
+anchor_testimonials: 'testimonials'
+anchor_contact_details: 'contact'
+footer_copyright: 'Copyright © 2017 Created by Cocoon'
+footer_facebook: 'http://createdbycocoon.com/drupal-themes'
+footer_twitter: 'http://createdbycocoon.com/drupal-themes'
+footer_googleplus: 'http://createdbycocoon.com/drupal-themes'
+footer_dribbble: 'http://createdbycocoon.com/drupal-themes'
+footer_linkedin: 'http://createdbycocoon.com/drupal-themes'
+map_show: 1
+map_latitude: '51.5131768'
+map_longitude: '-0.1399411'
+map_address: 'Soho, London, United Kingdom'
+map_phone: '345 678 91 23'
+map_email: 'createdbycocoon@mail.com'

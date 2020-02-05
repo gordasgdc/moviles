@@ -1,0 +1,9 @@
+
+# JSON-LD Mapping menu items definition
+entity.jsonld_mapping.collection:
+  title: 'JSON-LD Mapping'
+  route_name: entity.jsonld_mapping.collection
+  description: 'List JSON-LD Mapping (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

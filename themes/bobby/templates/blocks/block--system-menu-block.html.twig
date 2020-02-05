@@ -1,0 +1,15 @@
+{% extends "@classy/block/block--system-menu-block.html.twig" %}
+{#
+/**
+ * @file
+ * Bartik's theme implementation for a menu block.
+ *
+ * @ingroup themeable
+ */
+#}
+{% block content %}
+  <div{{ content_attributes }}>
+    {# When rendering a menu without label, render a menu toggle. #}
+    {{ content }}
+  </div>
+{% endblock %}

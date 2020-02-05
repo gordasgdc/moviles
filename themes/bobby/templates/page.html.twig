@@ -1,0 +1,199 @@
+{#
+/**
+ * @file
+ * Bartik's theme implementation to display a single page.
+ *
+ * The doctype, html, head and body tags are not in this template. Instead they
+ * can be found in the html.html.twig template normally located in the
+ * core/modules/system directory.
+ *
+ * Available variables:
+ *
+ * General utility variables:
+ * - base_path: The base URL path of the Drupal installation. Will usually be
+ *   "/" unless you have installed Drupal in a sub-directory.
+ * - is_front: A flag indicating if the current page is the front page.
+ * - logged_in: A flag indicating if the user is registered and signed in.
+ * - is_admin: A flag indicating if the user has permission to access
+ *   administration pages.
+ *
+ * Site identity:
+ * - front_page: The URL of the front page. Use this instead of base_path when
+ *   linking to the front page. This includes the language domain or prefix.
+ * - logo: The url of the logo image, as defined in theme settings.
+ * - site_name: The name of the site. This is empty when displaying the site
+ *   name has been disabled in the theme settings.
+ * - site_slogan: The slogan of the site. This is empty when displaying the site
+ *   slogan has been disabled in theme settings.
+
+ * Page content (in order of occurrence in the default page.html.twig):
+ * - node: Fully loaded node, if there is an automatically-loaded node
+ *   associated with the page and the node ID is the second argument in the
+ *   page's path (e.g. node/12345 and node/12345/revisions, but not
+ *   comment/reply/12345).
+ *
+ * Regions:
+ * - page.header: Items for the header region.
+ * - page.highlighted: Items for the highlighted region.
+ * - page.primary_menu: Items for the primary menu region.
+ * - page.secondary_menu: Items for the secondary menu region.
+ * - page.featured_top: Items for the featured top region.
+ * - page.content: The main content of the current page.
+ * - page.sidebar_first: Items for the first sidebar.
+ * - page.sidebar_second: Items for the second sidebar.
+ * - page.featured_bottom_first: Items for the first featured bottom region.
+ * - page.featured_bottom_second: Items for the second featured bottom region.
+ * - page.featured_bottom_third: Items for the third featured bottom region.
+ * - page.footer_first: Items for the first footer column.
+ * - page.footer_second: Items for the second footer column.
+ * - page.footer_third: Items for the third footer column.
+ * - page.footer_fourth: Items for the fourth footer column.
+ * - page.footer_fifth: Items for the fifth footer column.
+ * - page.breadcrumb: Items for the breadcrumb region.
+ *
+ * @see template_preprocess_page()
+ * @see bartik_preprocess_page()
+ * @see html.html.twig
+ */
+#}
+<header id="header" class="header masked">
+  <nav class="navbar{% if not is_front %} force-affix{% endif %}">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="{% if is_front %}#header{% else %}{{ path('<front>') }}{% endif %}" class="brand js-scroller">
+          {{ site_name }}
+          <span class="circle"></span>
+        </a>
+      </div>
+      <div class="navbar-collapse collapse" id="navbar-collapse">
+        {{ page.header }}
+      </div>   
+    </div>
+  </nav>
+  {% if page.hero %}
+    <div id="{% if anchor_hero %}{{ anchor_hero }}{% else %}home{% endif %}">
+      {{ page.hero }}
+    </div>
+  {% endif %}
+</header>
+<main class="content">
+
+  <div class="content{% if not is_front %} force-content{% endif %}">
+    {% if page.content and not is_front %}
+      <div class="main-content">
+        <div class="container">
+          {{ page.content }}
+        </div>
+      </div>
+    {% endif %}
+  </div><!-- /.content -->
+
+  {% if page.features %}
+    <section id="{% if anchor_features %}{{ anchor_features }}{% else %}features{% endif %}" class="about bgc-light-gray">
+      {{ page.features }}
+    </section>
+  {% endif %}
+
+  {% if page.big_letters %}
+    <section id="{% if anchor_big_letters %}{{ anchor_big_letters }}{% else %}big-letters{% endif %}" class="services section">
+      {{ page.big_letters }}
+    </section>
+  {% endif %}
+
+  {% if page.video_popup %}
+    <section id="{% if anchor_video_popup %}{{ anchor_video_popup }}{% else %}video-popup{% endif %}" class="video-section text-white">
+      {{ page.video_popup }}
+    </section>
+  {% endif %}
+
+  {% if page.percentages %}
+    <section id="{% if anchor_percentages %}{{ anchor_percentages }}{% else %}percentages{% endif %}" class="specialization section">
+      {{ page.percentages }}
+    </section>
+  {% endif %}
+
+  {% if page.team %}
+    <section id="{% if anchor_team %}{{ anchor_team }}{% else %}team{% endif %}" class="team bgc-primary text-white section">
+      {{ page.team }}
+    </section>
+  {% endif %}
+
+  {% if page.our_services %}
+    <section id="{% if anchor_our_services %}{{ anchor_our_services }}{% else %}our-services{% endif %}" class="features section">
+      {{ page.our_services }}
+    </section>
+  {% endif %}
+
+    {% if page.call_to_action %}
+      <section id="{% if anchor_call_to_action %}{{ anchor_call_to_action }}{% else %}call-to-action{% endif %}" class="getintouch text-white masked">
+        {{ page.call_to_action }}
+      </section>
+    {% endif %}
+
+    {% if page.portfolio %}
+      <div id="{% if anchor_portfolio %}{{ anchor_portfolio }}{% else %}portfolio{% endif %}" class="showcase section">
+        {{ page.portfolio }}
+      </div>
+    {% endif %}
+
+    {% if page.pricing_tables %}
+      <section id="{% if anchor_pricing_tables %}{{ anchor_pricing_tables }}{% else %}pricing-tables{% endif %}" class="prices text-center bgc-light-gray section" data-stellar-background-ratio="0.7">
+        {{ page.pricing_tables }}
+      </section>
+    {% endif %}
+
+  {% if page.testimonials %}
+    <section id="{% if anchor_testimonials %}{{ anchor_testimonials }}{% else %}testimonials{% endif %}" class="reviews text-center text-white masked section" data-stellar-background-ratio="0.4">
+      {{ page.testimonials }}
+    </section>
+  {% endif %}
+
+    {% if is_front %}
+      <section id="{% if anchor_contact_details %}{{ anchor_contact_details }}{% else %}contact{% endif %}" class="contacts text-center section">
+        {{ page.contact_details }}
+        {% if map_show %}
+          <div class="gmap js-gmap"></div>
+        {% endif %}
+      </section>
+    {% endif %}
+
+  <footer class="footer bgc-primary">
+    <div class="container">
+      <div class="row">
+        {% if footer_copyright %}
+          <div class="copyright col-sm-12 col-md-6">
+            {{ footer_copyright }}
+          </div>
+        {% endif %}
+        <div class="social col-sm-12 col-md-6">
+          {% if footer_facebook %}<a target="_blank" href="{{ footer_facebook }}" class="icon icon-facebook"></a>{% endif %}
+          {% if footer_twitter %}<a target="_blank" href="{{ footer_twitter }}" class="icon icon-twitter"></a>{% endif %}
+          {% if footer_googleplus %}<a target="_blank" href="{{ footer_googleplus }}" class="icon icon-googleplus"></a>{% endif %}
+          {% if footer_dribbble %}<a target="_blank" href="{{ footer_dribbble }}" class="icon icon-dribbble"></a>{% endif %}
+          {% if footer_linkedin %}<a target="_blank" href="{{ footer_linkedin }}" class="icon icon-linkedin"></a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>
+
+{% if page.modal %}
+  <div id="request" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content bgc-light-gray">
+        <div class="modal-header">
+          <span class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+        </div>
+        <div class="modal-body">
+          {{ page.modal }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}

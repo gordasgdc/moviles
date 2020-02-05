@@ -1,0 +1,8 @@
+autopost_facebook.app_settings:
+  title: 'App'
+  route_name: autopost_facebook.app_settings
+  base_route: autopost_facebook.app_settings
+autopost.facebook.account_settings:
+  title: 'Account'
+  route_name: autopost_facebook.account_settings
+  base_route: autopost_facebook.app_settings

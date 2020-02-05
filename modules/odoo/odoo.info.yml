@@ -1,0 +1,14 @@
+name: Odoo
+description: Provides an Odoo Client to integrate Drupal with Odoo.
+package: Other
+
+type: module
+# core: 8.x
+
+configure: odoo.settings
+
+# Information added by Drupal.org packaging script on 2017-10-10
+version: '8.x-1.0-alpha1'
+core: '8.x'
+project: 'odoo'
+datestamp: 1507623548

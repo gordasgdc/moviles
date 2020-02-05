@@ -1,0 +1,149 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the basic structure of a single Drupal page.
+ *
+ * Variables:
+ * - logged_in: A flag indicating if user is logged in.
+ * - root_path: The root path of the current page (e.g., node, admin, user).
+ * - node_type: The content type for the current node, if the page is a node.
+ * - head_title: List of text elements that make up the head_title variable.
+ *   May contain or more of the following:
+ *   - title: The title of the page.
+ *   - name: The name of the site.
+ *   - slogan: The slogan of the site.
+ * - page_top: Initial rendered markup. This should be printed before 'page'.
+ * - page: The rendered page markup.
+ * - page_bottom: Closing rendered markup. This variable should be printed after
+ *   'page'.
+ * - db_offline: A flag indicating if the database is offline.
+ * - placeholder_token: The token for generating head, css, js and js-bottom
+ *   placeholders.
+ *
+ * @see template_preprocess_html()
+ *
+ * @ingroup themeable
+ */
+#}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+  <head>
+    <head-placeholder token="{{ placeholder_token|raw }}">
+    <title>{{ head_title|safe_join(' | ') }}</title>
+    <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,600,700,800,900,200,100' rel='stylesheet'>
+    <css-placeholder token="{{ placeholder_token|raw }}">
+    <js-placeholder token="{{ placeholder_token|raw }}">
+    <script src="{{ base_path ~ directory }}/js/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="loader" class="loader">
+      <div class="cssload-bell">
+        <div class="cssload-circle">
+          <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+          <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+          <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+          <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+          <div class="cssload-inner"></div>
+        </div>
+      </div>
+    </div>
+    {{ page_top }}
+    {{ page }}
+    {{ page_bottom }}
+    <js-bottom-placeholder token="{{ placeholder_token|raw }}">
+    {% if map_show %}
+	<script>
+(function(){
+		var map;
+		map = new GMaps({
+			el: '.js-gmap',
+			lat: {{ map_latitude }},
+			lng: {{ map_longitude }},
+			scrollwheel:false,
+			zoom: 14,
+			zoomControl : true,
+			panControl : false,
+			streetViewControl : false,
+			mapTypeControl: false,
+			overviewMapControl: false,
+			clickable: false
+		});
+
+
+		//var image = 'images/map-marker.png';
+
+		map.addMarker({
+			lat: {{ map_latitude }},
+			lng: {{ map_longitude }},
+			//icon: image,
+			animation: google.maps.Animation.DROP,
+			verticalAlign: 'bottom',
+			horizontalAlign: 'center',
+			backgroundColor: '#d3cfcf',
+			infoWindow:{
+				content: '<div class="map-info">{% if map_address %}<div class="map-address-row"><span class="text">{{ map_address }}</span></div>{% endif %}{% if map_phone %}<div class="map-address-row"><span class="text">{{ map_phone }}</span></div>{% endif %}<div class="map-address-row">{% if map_email %}<span class="map-email"><span class="text">{{ map_email }}</span></span>{% endif %}</p>{% if map_address %}<p class="gmap-open"><a href="https://www.google.com/maps/place/{{ map_address }}/data=!4m2!3m1!1s0x89c259af44f80211:0xbd87d30d3c7da9d2?sa=X&amp;ei=KqAdVazxJMTkuQS9sIGIBQ&amp;aved=0CB0Q8gEwAA" target="_blank">Open in Google Maps</a></p>{% endif %}</div>'
+			}
+		});
+		  
+		var styles = [ 
+
+			{
+			  "featureType": "road",
+			  "stylers": [
+				{ "color": "#422B53" }
+			  ]
+			  	},{
+			  "featureType": "landscape",
+			  "stylers": [
+				{ "color": "#2D1C3A" }
+			  ]
+				},{
+			  "featureType": "water",
+			  "stylers": [
+				{ "color": "#78588C" }
+			  ]
+			  },{
+			  "elementType": "labels.text.fill",
+			  "stylers": [
+				{ "color": "#808080" }
+			  ]
+			  },{
+			  "featureType": "poi",
+			  "stylers": [
+				{ "color": "#1D1026" }
+			  ]
+			  },{
+			  "elementType": "labels.text",
+			  "stylers": [
+				{ "saturation": 1 },
+				{ "weight": 0.1 },
+				{ "color": "#cccccc" }
+			  ]
+			}
+	  
+		];
+
+		map.addStyle({
+			styledMapName:"Styled Map",
+			styles: styles,
+			mapTypeId: "map_style"  
+		});
+
+		map.setStyle("map_style");
+		$(window).resize(function(){
+			google.maps.event.trigger(map, "resize");
+		});
+	}()); 
+	</script>
+
+    {% endif %}
+  </body>
+</html>

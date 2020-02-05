@@ -1,0 +1,35 @@
+name: Cocoon Bobby
+type: theme
+base theme: classy
+description: 'One-Page Landing Page Theme, <a target="_blank" href="http://createdbycocoon.com/drupal-themes">Created by Cocoon</a>'
+package: Core
+# version: VERSION
+# core: 8.x
+libraries:
+  - bobby/global-styling
+ckeditor_stylesheets:
+  - css/base/elements.css
+  - css/components/captions.css
+  - css/components/table.css
+regions:
+  header: Header
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'
+  highlighted: Highlighted
+  content: Content
+  hero: 'Hero section'
+  features: 'Features'
+  big_letters: 'Big letters'
+  video_popup: 'Video popup'
+  percentages: 'Percentages'
+  team: 'Team'
+  our_services: 'Our Services'
+  call_to_action: 'Call to action'
+  portfolio: 'Portfolio'
+  pricing_tables: 'Pricing tables'
+  testimonials: 'Testimonials'
+  contact_details: 'Contact details'
+  modal: 'Modal'
+version: '1.0.0'
+core: '8.x'
+project: 'drupal'
